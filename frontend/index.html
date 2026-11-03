@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechZone IT Innovation & Hardware Solutions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <div class="app-wrapper">
+    <aside class="sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <a href="javascript:void(0)" class="brand-logo" onclick="navigateTo('home')">
+          <div class="brand-icon">
+            <i class="bi bi-cpu-fill"></i>
+          </div>
+          <div>
+            <div style="line-height: 1.1;">CapriZone</div>
+            <small
+              style="font-size: 0.65rem; color: var(--accent-cyan); letter-spacing: 1px; font-weight: 500;">ร้านขายอุปกรณ์IT</small>
+          </div>
+        </a>
+        <button class="btn btn-sm btn-dark d-lg-none text-white" onclick="toggleSidebar()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="sidebar-menu-category">เมนูหลัก</li>
+        <li class="sidebar-item">
+          <a class="sidebar-link active" data-route="home" onclick="navigateTo('home')">
+            <i class="bi bi-house-door"></i>
+            <span>หน้าแรก (Home)</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-route="products" onclick="navigateTo('products')">
+            <i class="bi bi-grid"></i>
+            <span>สินค้าไอทีทั้งหมด</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-route="about" onclick="navigateTo('about')">
+            <i class="bi bi-building"></i>
+            <span>ข้อมูลบริษัท</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="/techzone.sql" download="techzone.sql">
+            <i class="bi bi-filetype-sql text-cyan"></i>
+            <span>ดาวน์โหลด SQL ฐานข้อมูล</span>
+          </a>
+        </li>
+
+        <li class="sidebar-menu-category member-only d-none">สำหรับสมาชิก</li>
+        <li class="sidebar-item member-only d-none">
+          <a class="sidebar-link" data-route="my-orders" onclick="navigateTo('my-orders')">
+            <i class="bi bi-bag-check"></i>
+            <span>ประวัติการสั่งซื้อ</span>
+          </a>
+        </li>
+
+        <li class="sidebar-menu-category admin-only d-none">ระบบจัดการ (Admin)</li>
+        <li class="sidebar-item admin-only d-none">
+          <a class="sidebar-link" data-route="admin-products" onclick="navigateTo('admin-products')">
+            <i class="bi bi-box-seam"></i>
+            <span>จัดการสินค้า (CRUD)</span>
+          </a>
+        </li>
+        <li class="sidebar-item admin-only d-none">
+          <a class="sidebar-link" data-route="admin-orders" onclick="navigateTo('admin-orders')">
+            <i class="bi bi-receipt"></i>
+            <span>จัดการคำสั่งซื้อ</span>
+          </a>
+        </li>
+        <li class="sidebar-item admin-only d-none">
+          <a class="sidebar-link" data-route="admin-stats" onclick="navigateTo('admin-stats')">
+            <i class="bi bi-graph-up-arrow"></i>
+            <span>รายงานและสถิติ</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div id="sidebarUserBox" class="user-status-card">
+          <div class="user-avatar" id="sidebarAvatar">?</div>
+          <div class="flex-grow-1 overflow-hidden">
+            <div class="fw-bold text-truncate" id="sidebarUserName">ผู้เยี่ยมชม</div>
+            <small class="text-muted d-block text-truncate" id="sidebarUserRole">Guest</small>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <header class="top-navbar">
+        <div class="d-flex align-items-center gap-3">
+          <button class="btn btn-dark d-lg-none" onclick="toggleSidebar()">
+            <i class="bi bi-list fs-4"></i>
+          </button>
+          <div class="search-box-top d-none d-md-block">
+            <i class="bi bi-search"></i>
+            <input type="text" id="topSearchInput" placeholder="ค้นหาโน้ตบุ๊ก, การ์ดจอ, อุปกรณ์ไอที..."
+              onkeyup="handleGlobalSearch(event)">
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+          <div class="cart-btn-badge" onclick="openCartModal()" title="ตะกร้าสินค้า">
+            <i class="bi bi-cart3 fs-5"></i>
+            <span class="cart-count" id="headerCartCount">0</span>
+          </div>
+
+          <div id="authActions">
+            <button class="btn btn-outline-cyan btn-sm me-2" onclick="openLoginModal()">
+              <i class="bi bi-box-arrow-in-right me-1"></i> เข้าสู่ระบบ
+            </button>
+            <button class="btn btn-cyan btn-sm" onclick="openRegisterModal()">
+              <i class="bi bi-person-plus me-1"></i> สมัครสมาชิก
+            </button>
+          </div>
+
+          <div id="userProfileDropdown" class="dropdown d-none">
+            <button class="btn btn-dark btn-sm dropdown-toggle d-flex align-items-center gap-2 border-secondary"
+              type="button" data-bs-toggle="dropdown">
+              <span class="badge bg-primary" id="navbarRoleBadge">Member</span>
+              <span id="navbarUserName" class="fw-semibold">Username</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow">
+              <li>
+                <h6 class="dropdown-header text-muted" id="navbarUserEmail">user@email.com</h6>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li>
+                <a class="dropdown-item" href="javascript:void(0)" onclick="navigateTo('my-orders')">
+                  <i class="bi bi-bag-check me-2"></i> ประวัติคำสั่งซื้อ
+                </a>
+              </li>
+              <li class="admin-only d-none">
+                <a class="dropdown-item" href="javascript:void(0)" onclick="navigateTo('admin-products')">
+                  <i class="bi bi-gear me-2"></i> แผงควบคุม Admin
+                </a>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li>
+                <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="logoutUser()">
+                  <i class="bi bi-box-arrow-right me-2"></i> ออกจากระบบ
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <main class="content-body">
+        <section id="view-home" class="page-view">
+          <div class="hero-banner mb-5">
+            <div class="row align-items-center">
+              <div class="col-lg-7">
+                <span class="badge px-3 py-2 rounded-pill mb-3"
+                  style="background: rgba(0,210,255,0.15); color: var(--accent-cyan); border: 1px solid var(--accent-cyan);">
+                  <i class="bi bi-stars me-1"></i> Official Enterprise IT Hardware & Retailer
+                </span>
+                <h1 class="display-5 fw-bold mb-3 text-white">
+                  ขับเคลื่อนนวัตกรรมดิจิทัล ด้วยฮาร์ดแวร์ไอทีระดับพรีเมียม
+                </h1>
+                <p class="lead text-light mb-4" style="max-width: 600px; opacity: 0.9;">
+                  TechZone ผู้จัดจำหน่ายสินค้าไอทีครบวงจร โน้ตบุ๊กทำงาน เกมมิ่งเกียร์ ชิ้นส่วนคอมพิวเตอร์
+                  และอุปกรณ์เน็ตเวิร์กองค์กร รับประกันศูนย์แท้ 100%
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                  <button class="btn btn-cyan btn-lg px-4" onclick="navigateTo('products')">
+                    <i class="bi bi-bag-plus me-2"></i> เลือกซื้อสินค้าทันที
+                  </button>
+                  <button class="btn btn-outline-cyan btn-lg px-4" onclick="navigateTo('about')">
+                    <i class="bi bi-info-circle me-2"></i> เกี่ยวกับบริษัท
+                  </button>
+                </div>
+              </div>
+              <div class="col-lg-5 text-center mt-4 mt-lg-0">
+                <img src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=700&q=80"
+                  alt="TechZone Workspace" class="img-fluid rounded-4 shadow-lg border border-secondary"
+                  style="max-height: 280px; object-fit: cover; width: 100%;">
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-4 mb-5">
+            <div class="col-md-3 col-6">
+              <div class="stat-box">
+                <div class="stat-icon cyan">
+                  <i class="bi bi-shield-check"></i>
+                </div>
+                <div>
+                  <div class="fw-bold fs-5 text-white">ประกันศูนย์แท้</div>
+                  <small class="text-muted">100% Original Brand</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-6">
+              <div class="stat-box">
+                <div class="stat-icon blue">
+                  <i class="bi bi-truck"></i>
+                </div>
+                <div>
+                  <div class="fw-bold fs-5 text-white">จัดส่งด่วน</div>
+                  <small class="text-muted">Fast & Secure Shipping</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-6">
+              <div class="stat-box">
+                <div class="stat-icon green">
+                  <i class="bi bi-headset"></i>
+                </div>
+                <div>
+                  <div class="fw-bold fs-5 text-white">บริการเทคนิค</div>
+                  <small class="text-muted">Expert IT Support 24/7</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-6">
+              <div class="stat-box">
+                <div class="stat-icon purple">
+                  <i class="bi bi-patch-check"></i>
+                </div>
+                <div>
+                  <div class="fw-bold fs-5 text-white">ความพึงพอใจ</div>
+                  <small class="text-muted">99.4% Customer Rating</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h3 class="fw-bold text-white mb-1"><i class="bi bi-fire text-danger me-2"></i>สินค้าไอทีแนะนำยอดนิยม</h3>
+              <p class="text-muted mb-0">คัดสรรอุปกรณ์ฮาร์ดแวร์ประสิทธิภาพสูงที่ตอบโจทย์ทั้งเกมเมอร์และสายงานอาชีพ</p>
+            </div>
+            <button class="btn btn-outline-cyan btn-sm" onclick="navigateTo('products')">
+              ดูทั้งหมด <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+
+          <div class="row g-4" id="homeFeaturedProducts"></div>
+        </section>
+
+        <section id="view-products" class="page-view d-none">
+          <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+            <div>
+              <h2 class="fw-bold text-white mb-1">แคตตาล็อกสินค้าไอที (IT Catalog)</h2>
+              <p class="text-muted mb-0">เลือกซื้อคอมพิวเตอร์ โน้ตบุ๊ก อุปกรณ์ตกแต่ง และฮาร์ดแวร์สเปกสูง</p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <label class="text-muted small text-nowrap">เรียงตาม:</label>
+              <select id="productSortSelect" class="form-select form-select-sm" style="width: 170px;"
+                onchange="loadProducts()">
+                <option value="newest">สินค้ามาใหม่ล่าสุด</option>
+                <option value="price-asc">ราคา: ต่ำสุด - สูงสุด</option>
+                <option value="price-desc">ราคา: สูงสุด - ต่ำสุด</option>
+                <option value="name">ชื่อสินค้า (A - Z)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2 mb-4" id="categoryFilters">
+            <span class="filter-pill active" onclick="setCategoryFilter('All', this)">ทั้งหมด (All)</span>
+            <span class="filter-pill" onclick="setCategoryFilter('Laptops', this)">โน้ตบุ๊ก (Laptops)</span>
+            <span class="filter-pill" onclick="setCategoryFilter('Components', this)">ชิ้นส่วนคอม (Components)</span>
+            <span class="filter-pill" onclick="setCategoryFilter('Monitors', this)">จอมอนิเตอร์ (Monitors)</span>
+            <span class="filter-pill" onclick="setCategoryFilter('Accessories', this)">เกมมิ่งเกียร์
+              (Accessories)</span>
+            <span class="filter-pill" onclick="setCategoryFilter('Network & Storage', this)">เน็ตเวิร์ก/สตอเรจ</span>
+          </div>
+
+          <div class="row g-4" id="productsCatalogGrid"></div>
+
+          <div id="noProductsFound" class="text-center py-5 d-none">
+            <i class="bi bi-search display-3 text-muted mb-3 d-block"></i>
+            <h5 class="text-white">ไม่พบสินค้าที่ตรงกับเงื่อนไขการค้นหา</h5>
+            <p class="text-muted">กรุณาลองเปลี่ยนคำค้นหา หรือเลือกหมวดหมู่อื่น</p>
+            <button class="btn btn-outline-cyan btn-sm" onclick="resetProductFilters()">รีเซ็ตตัวกรอง</button>
+          </div>
+        </section>
+
+        <section id="view-about" class="page-view d-none">
+          <div class="card rounded-4 p-4 p-lg-5 mb-4 shadow-lg" style="background-color: #141d36 !important; border: 1px solid rgba(0, 210, 255, 0.3) !important;">
+            <div class="row align-items-center mb-5">
+              <div class="col-lg-8">
+                <span class="badge bg-primary px-3 py-2 rounded-pill mb-2">Corporate Profile</span>
+                <h2 class="fw-bold text-white mb-3" id="companyName">TechZone Innovation & Solutions Co., Ltd.</h2>
+                <h5 class="text-info mb-3" id="companySlogan">ผู้นำเข้าและจัดจำหน่ายเทคโนโลยี IT Hardware และ Solutions
+                  ครบวงจร</h5>
+                <p class="lead fs-6 mb-0" id="companyDescription" style="line-height: 1.8; color: #cbd5e1 !important;"></p>
+              </div>
+              <div class="col-lg-4 text-center mt-4 mt-lg-0">
+                <div class="p-4 rounded-4"
+                  style="background: rgba(0, 210, 255, 0.08); border: 1px dashed var(--accent-cyan);">
+                  <i class="bi bi-buildings fs-1 text-cyan mb-2 d-block"></i>
+                  <h6 class="text-white fw-bold mb-1">สำนักงานใหญ่</h6>
+                  <p class="small mb-0" id="companyAddress" style="color: #cbd5e1 !important;"></p>
+                  <hr class="border-secondary my-3">
+                  <p class="small text-white mb-1"><i class="bi bi-telephone me-1 text-cyan"></i> <span
+                      id="companyPhone" style="color: #f1f5f9 !important;"></span></p>
+                  <p class="small text-white mb-0"><i class="bi bi-envelope me-1 text-cyan"></i> <span
+                      id="companyEmail" style="color: #f1f5f9 !important;"></span></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+              <div class="col-md-6">
+                <div class="p-4 rounded-4 h-100"
+                  style="background: rgba(11, 19, 43, 0.75); border: 1px solid rgba(255, 255, 255, 0.12);">
+                  <h4 class="fw-bold text-white mb-3"><i class="bi bi-compass text-cyan me-2"></i>วิสัยทัศน์ (Vision)
+                  </h4>
+                  <p class="mb-0" id="companyVision" style="color: #cbd5e1 !important; line-height: 1.7;"></p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="p-4 rounded-4 h-100"
+                  style="background: rgba(11, 19, 43, 0.75); border: 1px solid rgba(255, 255, 255, 0.12);">
+                  <h4 class="fw-bold text-white mb-3"><i class="bi bi-bullseye text-cyan me-2"></i>พันธกิจ (Mission)
+                  </h4>
+                  <ul class="ps-3 mb-0" id="companyMissionList" style="color: #cbd5e1 !important; line-height: 1.7;"></ul>
+                </div>
+              </div>
+            </div>
+
+            <h4 class="fw-bold text-white mb-3 mt-4"><i class="bi bi-award text-cyan me-2"></i>จุดเด่นและบริการของเรา
+            </h4>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <div class="p-3 rounded-3 bg-dark border border-secondary">
+                  <h6 class="text-white fw-bold"><i class="bi bi-pc-display me-2 text-primary"></i>Enterprise IT
+                    Solutions</h6>
+                  <small class="text-muted">จัดหาอุปกรณ์เซิร์ฟเวอร์, Workstation
+                    และโครงข่ายสำหรับหน่วยงานและองค์กร</small>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="p-3 rounded-3 bg-dark border border-secondary">
+                  <h6 class="text-white fw-bold"><i class="bi bi-cpu me-2 text-info"></i>Custom Gaming & AI Rigs</h6>
+                  <small class="text-muted">บริการประกอบคอมพิวเตอร์สเปกเฉพาะทางสำหรับงานประมวลผลโมเดล AI
+                    และเกมมิ่ง</small>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="p-3 rounded-3 bg-dark border border-secondary">
+                  <h6 class="text-white fw-bold"><i class="bi bi-wrench-adjustable me-2 text-success"></i>On-site IT
+                    Maintenance</h6>
+                  <small class="text-muted">ทีมวิศวกรซัพพอร์ตและแก้ไขปัญหาด้านฮาร์ดแวร์ถึงสถานที่ รวดเร็ว
+                    ปลอดภัย</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-5 p-4 rounded-4" style="background: rgba(0, 210, 255, 0.04); border: 1px solid var(--border-cyan);">
+              <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                <div>
+                  <h4 class="fw-bold text-white mb-1"><i class="bi bi-database text-cyan me-2"></i>โครงสร้างฐานข้อมูลเชิงสัมพันธ์ (Database Schema)</h4>
+                  <p class="text-light small mb-0">ตารางข้อมูลและโครงสร้าง SQL ที่ใช้งานในระบบ (users, products, orders, order_items)</p>
+                </div>
+                <a href="/techzone.sql" download="techzone.sql" class="btn btn-cyan btn-sm">
+                  <i class="bi bi-download me-1"></i> ดาวน์โหลด techzone.sql
+                </a>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-3 col-6">
+                  <div class="p-3 rounded bg-dark border border-secondary text-center">
+                    <div class="text-cyan fw-bold fs-6">users</div>
+                    <small class="text-light" style="font-size: 0.78rem;">สมาชิก, สิทธิ์, Token, รหัสผ่าน</small>
+                  </div>
+                </div>
+                <div class="col-md-3 col-6">
+                  <div class="p-3 rounded bg-dark border border-secondary text-center">
+                    <div class="text-cyan fw-bold fs-6">products</div>
+                    <small class="text-light" style="font-size: 0.78rem;">สินค้าไอที, หมวดหมู่, สต็อก, สเปก</small>
+                  </div>
+                </div>
+                <div class="col-md-3 col-6">
+                  <div class="p-3 rounded bg-dark border border-secondary text-center">
+                    <div class="text-cyan fw-bold fs-6">orders</div>
+                    <small class="text-light" style="font-size: 0.78rem;">คำสั่งซื้อ, ผู้รับ, ยอดเงิน, สถานะ</small>
+                  </div>
+                </div>
+                <div class="col-md-3 col-6">
+                  <div class="p-3 rounded bg-dark border border-secondary text-center">
+                    <div class="text-cyan fw-bold fs-6">order_items</div>
+                    <small class="text-light" style="font-size: 0.78rem;">รายการสินค้าในแต่ละคำสั่งซื้อ</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-my-orders" class="page-view d-none">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h2 class="fw-bold text-white mb-1">ประวัติการสั่งซื้อของฉัน</h2>
+              <p class="text-muted mb-0">ตรวจสอบสถานะรายการสินค้าและการจัดส่ง</p>
+            </div>
+            <button class="btn btn-outline-cyan btn-sm" onclick="loadMyOrders()">
+              <i class="bi bi-arrow-clockwise me-1"></i> รีเฟรชข้อมูล
+            </button>
+          </div>
+
+          <div id="myOrdersList"></div>
+          <div id="noOrdersMessage" class="text-center py-5 d-none">
+            <i class="bi bi-bag-x display-3 text-muted mb-3 d-block"></i>
+            <h5 class="text-white">ยังไม่มีประวัติการสั่งซื้อสินค้า</h5>
+            <p class="text-muted">เลือกสินค้าที่คุณถูกใจและเริ่มสั่งซื้อได้เลย</p>
+            <button class="btn btn-cyan btn-sm" onclick="navigateTo('products')">ไปที่แคตตาล็อกสินค้า</button>
+          </div>
+        </section>
+
+        <section id="view-admin-products" class="page-view d-none">
+          <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+            <div>
+              <h2 class="fw-bold text-white mb-1"><i class="bi bi-sliders2 text-cyan me-2"></i>จัดการคลังสินค้า (Admin
+                Product CRUD)</h2>
+              <p class="text-muted mb-0">เพิ่มสินค้าใหม่ ดูรายละเอียด แก้ไขข้อมูล และลบรายการสินค้า</p>
+            </div>
+            <button class="btn btn-cyan" onclick="openAddProductModal()">
+              <i class="bi bi-plus-circle me-1"></i> เพิ่มสินค้าใหม่
+            </button>
+          </div>
+
+          <div class="card bg-card border-secondary rounded-4 p-3 shadow">
+            <div class="table-responsive">
+              <table class="table table-tech w-100">
+                <thead>
+                  <tr>
+                    <th>รูปภาพ</th>
+                    <th>ชื่อสินค้า</th>
+                    <th>หมวดหมู่</th>
+                    <th>ราคา (บาท)</th>
+                    <th>คงเหลือ (ชิ้น)</th>
+                    <th>การจัดการ</th>
+                  </tr>
+                </thead>
+                <tbody id="adminProductsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-admin-orders" class="page-view d-none">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h2 class="fw-bold text-white mb-1"><i
+                  class="bi bi-card-checklist text-cyan me-2"></i>จัดการคำสั่งซื้อลูกค้าทั้งหมด</h2>
+              <p class="text-muted mb-0">ติดตามและอัปเดตสถานะการชำระเงินและการจัดส่งสินค้า</p>
+            </div>
+            <button class="btn btn-outline-cyan btn-sm" onclick="loadAdminOrders()">
+              <i class="bi bi-arrow-clockwise me-1"></i> โหลดข้อมูลล่าสุด
+            </button>
+          </div>
+
+          <div class="card bg-card border-secondary rounded-4 p-3 shadow">
+            <div class="table-responsive">
+              <table class="table table-tech w-100">
+                <thead>
+                  <tr>
+                    <th>รหัสคำสั่งซื้อ</th>
+                    <th>ชื่อลูกค้า</th>
+                    <th>เบอร์โทร & ที่อยู่จัดส่ง</th>
+                    <th>ยอดรวมสุทธิ</th>
+                    <th>สถานะปัจจุบัน</th>
+                    <th>เปลี่ยนสถานะ</th>
+                  </tr>
+                </thead>
+                <tbody id="adminOrdersTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-admin-stats" class="page-view d-none">
+          <div class="mb-4">
+            <h2 class="fw-bold text-white mb-1"><i
+                class="bi bi-bar-chart-line text-cyan me-2"></i>รายงานสรุปภาพรวมธุรกิจ</h2>
+            <p class="text-muted mb-0">สถิติยอดขาย จำนวนคำสั่งซื้อ สมาชิก และสินค้าในคลัง</p>
+          </div>
+
+          <div class="row g-4 mb-4">
+            <div class="col-md-3 col-6">
+              <div class="stat-box">
+                <div class="stat-icon green"><i class="bi bi-cash-stack"></i></div>
+                <div>
+                  <small class="text-muted">ยอดขายรวมทั้งหมด</small>
+                  <div class="fw-bold fs-4 text-white" id="statRevenue">฿0</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-6">
+              <div class="stat-box">
+                <div class="stat-icon cyan"><i class="bi bi-receipt"></i></div>
+                <div>
+                  <small class="text-muted">จำนวนคำสั่งซื้อ</small>
+                  <div class="fw-bold fs-4 text-white" id="statOrders">0</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-6">
+              <div class="stat-box">
+                <div class="stat-icon blue"><i class="bi bi-laptop"></i></div>
+                <div>
+                  <small class="text-muted">จำนวนรายการสินค้า</small>
+                  <div class="fw-bold fs-4 text-white" id="statProducts">0</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-6">
+              <div class="stat-box">
+                <div class="stat-icon purple"><i class="bi bi-people"></i></div>
+                <div>
+                  <small class="text-muted">จำนวนสมาชิกในระบบ</small>
+                  <div class="fw-bold fs-4 text-white" id="statMembers">0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card bg-card border-secondary rounded-4 p-4">
+            <h5 class="fw-bold text-white mb-3">คำแนะนำในการบริหารจัดการระบบ</h5>
+            <ul class="text-light mb-0 ps-3" style="line-height: 1.8;">
+              <li>สามารถตรวจสอบและอัปเดตสถานะออเดอร์ของลูกค้าจาก "pending" เป็น "processing", "shipped" หรือ "completed"
+                ในเมนูจัดการคำสั่งซื้อ</li>
+              <li>ระบบตัดสต็อกสินค้าอัตโนมัติเมื่อลูกค้าสั่งซื้อ หากสต็อกหมดจะไม่สามารถสั่งเพิ่มได้จนกว่า Admin
+                จะเข้ามาเติมสต็อก</li>
+              <li>ผู้ใช้ทั่วไปที่สมัครสมาชิกต้องผ่านการยืนยันรหัสอีเมลก่อนเข้าสู่ระบบเพื่อความปลอดภัยของฐานข้อมูล</li>
+            </ul>
+          </div>
+        </section>
+      </main>
+
+      <footer class="py-3 px-4 text-center border-top border-secondary text-muted small" style="background: #0b132b;">
+        <div>&copy; 2025 TechZone IT Innovation & Hardware Solutions Co., Ltd. All rights reserved.</div>
+        <div class="mt-1" style="font-size: 0.75rem;">ระบบเว็บแอปพลิเคชันเพื่อการศึกษา e-learning.buu.ac.th</div>
+      </footer>
+    </div>
+  </div>
+
+  <div class="modal fade" id="loginModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold text-white"><i class="bi bi-box-arrow-in-right text-cyan me-2"></i>เข้าสู่ระบบ
+            (Sign In)</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-info py-2 small mb-3">
+            <div class="fw-bold mb-1">บัญชีทดสอบสำหรับอาจารย์ผู้ตรวจ:</div>
+            <div><a href="javascript:void(0)" class="text-info fw-semibold"
+                onclick="quickFillLogin('admin@techzone.com', 'admin1234')">คลิกเพื่อล็อกอิน Admin</a>
+              (admin@techzone.com / admin1234)</div>
+            <div><a href="javascript:void(0)" class="text-info fw-semibold"
+                onclick="quickFillLogin('member@techzone.com', 'member1234')">คลิกเพื่อล็อกอิน Member</a>
+              (member@techzone.com / member1234)</div>
+          </div>
+          <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+            <div class="mb-3">
+              <label class="form-label text-white fw-medium">อีเมล (Email)</label>
+              <input type="email" id="loginEmail" class="form-control" required placeholder="name@example.com">
+            </div>
+            <div class="mb-3">
+              <label class="form-label text-white fw-medium">รหัสผ่าน (Password)</label>
+              <input type="password" id="loginPassword" class="form-control" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn btn-cyan w-100 py-2 mt-2">
+              <i class="bi bi-box-arrow-in-right me-1"></i> เข้าสู่ระบบ
+            </button>
+          </form>
+          <div class="text-center mt-3">
+            <span class="text-light">ยังไม่มีบัญชีผู้ใช้?</span> <a href="javascript:void(0)"
+              class="text-cyan fw-bold text-decoration-none" onclick="switchToRegister()">สมัครสมาชิกที่นี่</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="registerModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold text-white"><i class="bi bi-person-plus text-cyan me-2"></i>สมัครสมาชิกใหม่
+            (Register)</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-light fs-6 mb-3">กรอกข้อมูลเพื่อสมัครสมาชิก
+            ระบบจะส่งอีเมลยืนยันตัวตนพร้อมปุ่มกดเปิดใช้งานไปยังอีเมลของคุณ</p>
+          <form id="registerForm" onsubmit="handleRegisterSubmit(event)">
+            <div class="mb-3">
+              <label class="form-label text-white fw-medium">ชื่อ-นามสกุล / ชื่อผู้ใช้</label>
+              <input type="text" id="regUsername" class="form-control" required placeholder="สมศักดิ์ นามสมมุติ">
+            </div>
+            <div class="mb-3">
+              <label class="form-label text-white fw-medium">อีเมล (Email สำหรับรับลิงก์ยืนยันตัวตน)</label>
+              <input type="email" id="regEmail" class="form-control" required placeholder="yourname@gmail.com">
+            </div>
+            <div class="mb-3">
+              <label class="form-label text-white fw-medium">รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)</label>
+              <input type="password" id="regPassword" class="form-control" minlength="6" required
+                placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn btn-cyan w-100 py-2 mt-2">
+              <i class="bi bi-check2-circle me-1"></i> สมัครสมาชิกและรับอีเมลยืนยัน
+            </button>
+          </form>
+          <div class="text-center mt-3">
+            <span class="text-light">มีบัญชีอยู่แล้ว?</span> <a href="javascript:void(0)"
+              class="text-cyan fw-bold text-decoration-none" onclick="switchToLogin()">เข้าสู่ระบบ</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="verifyEmailModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold text-white"><i
+              class="bi bi-envelope-check text-cyan me-2"></i>ยืนยันตัวตนผ่านอีเมล</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-light mb-1">ระบบได้จัดส่งอีเมลยืนยันตัวตนไปยัง:</p>
+          <div class="fw-bold text-cyan mb-3 fs-5" id="verifyTargetEmail">email@example.com</div>
+
+          <div class="p-3 rounded-3 mb-3"
+            style="background: rgba(0, 210, 255, 0.08); border: 1px solid var(--accent-cyan);">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="text-white fw-bold"><i class="bi bi-envelope-open-fill text-cyan me-2"></i>วิธีที่ 1:
+                กดยืนยันผ่านลิงก์ในอีเมล</span>
+              <span class="badge bg-success">คลิกได้ทันที</span>
+            </div>
+            <p class="text-light small mb-2">เปิดกล่องข้อความอีเมลของคุณและกดยืนยัน
+              หรือคลิกปุ่มด้านล่างเพื่อจำลองการเปิดลิงก์จากอีเมล:</p>
+            <a id="directVerifyEmailLink" href="#" target="_blank" class="btn btn-sm btn-cyan w-100 fw-bold">
+              <i class="bi bi-box-arrow-up-right me-1"></i> คลิกเปิดลิงก์ยืนยันตัวตนจากอีเมล
+            </a>
+          </div>
+
+          <div class="email-simulator-box mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="text-light fw-bold small"><i class="bi bi-shield-lock me-1 text-warning"></i>วิธีที่ 2:
+                กรอกรหัส OTP 6 หลัก</span>
+              <span class="badge bg-secondary">หรือกรอกรหัส</span>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mt-2">
+              <div>
+                <span class="text-light small">รหัส OTP: </span>
+                <span class="fw-bold fs-5 text-warning letter-spacing-2" id="simulatedCodeText">------</span>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-warning" onclick="autoFillVerificationCode()">
+                <i class="bi bi-clipboard-check me-1"></i> เติมรหัส
+              </button>
+            </div>
+          </div>
+
+          <form id="verifyForm" onsubmit="handleVerifySubmit(event)">
+            <div class="mb-3">
+              <label class="form-label text-white fw-medium">กรอกรหัสยืนยัน 6 หลัก</label>
+              <input type="text" id="verifyCodeInput" class="form-control text-center fs-4 fw-bold letter-spacing-2"
+                maxlength="6" required placeholder="000000">
+            </div>
+            <button type="submit" class="btn btn-cyan w-100 py-2">
+              <i class="bi bi-shield-lock-fill me-1"></i> ยืนยันอีเมลและเปิดใช้งานบัญชี
+            </button>
+          </form>
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <button type="button" class="btn btn-link btn-sm text-cyan text-decoration-none p-0"
+              onclick="resendVerificationCode()">
+              <i class="bi bi-arrow-repeat me-1"></i> ส่งอีเมลใหม่อีกครั้ง
+            </button>
+            <button type="button" class="btn btn-link btn-sm text-light text-decoration-none p-0"
+              data-bs-dismiss="modal">
+              ปิดหน้าต่าง
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="productDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold" id="detailProductName">ชื่อสินค้า</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 mb-3 mb-md-0">
+              <div class="rounded-3 overflow-hidden bg-dark" style="height: 280px;">
+                <img id="detailProductImage" src="" alt="Product" class="w-100 h-100 object-fit-cover">
+              </div>
+            </div>
+            <div class="col-md-6 d-flex flex-direction-column justify-content-between">
+              <div>
+                <span class="badge bg-secondary mb-2" id="detailProductCategory">Category</span>
+                <h3 class="fw-bold text-cyan mb-2" id="detailProductPrice">฿0</h3>
+                <p class="text-muted small mb-2"><i class="bi bi-box-seam me-1"></i> สต็อกคงเหลือ: <span
+                    id="detailProductStock" class="fw-bold text-white">0</span> ชิ้น</p>
+                <hr class="border-secondary my-2">
+                <p class="text-light small mb-3" id="detailProductDesc"></p>
+                <div class="p-2 rounded-2 bg-dark border border-secondary mb-3">
+                  <small class="text-muted d-block fw-bold mb-1"><i class="bi bi-cpu me-1"></i>
+                    สเปกฮาร์ดแวร์โดยละเอียด:</small>
+                  <small class="text-light" id="detailProductSpecs"></small>
+                </div>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="button" id="detailAddToCartBtn" class="btn btn-cyan flex-grow-1"
+                  onclick="addProductFromDetail()">
+                  <i class="bi bi-cart-plus me-1"></i> เพิ่มลงตะกร้าสินค้า
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="cartModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold"><i class="bi bi-cart3 text-cyan me-2"></i>ตะกร้าสินค้าและการสั่งซื้อ</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="cartEmptyState" class="text-center py-4 d-none">
+            <i class="bi bi-cart-x display-4 text-muted mb-3 d-block"></i>
+            <h5 class="text-white">ไม่มีสินค้าในตะกร้าของคุณ</h5>
+            <p class="text-muted">กรุณาเลือกซื้อสินค้าจากแคตตาล็อก</p>
+          </div>
+
+          <div id="cartFilledState">
+            <div class="table-responsive mb-3">
+              <table class="table table-tech w-100">
+                <thead>
+                  <tr>
+                    <th>สินค้า</th>
+                    <th>ราคาต่อหน่วย</th>
+                    <th style="width: 140px;">จำนวน</th>
+                    <th>รวม</th>
+                    <th>ลบ</th>
+                  </tr>
+                </thead>
+                <tbody id="cartTableBody"></tbody>
+              </table>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center p-3 rounded-3 mb-4"
+              style="background: rgba(0,210,255,0.08); border: 1px solid var(--border-cyan);">
+              <h5 class="mb-0 text-white fw-bold">ยอดรวมทั้งสิ้น:</h5>
+              <h4 class="mb-0 text-cyan fw-bold" id="cartTotalAmount">฿0</h4>
+            </div>
+
+            <h5 class="fw-bold text-white mb-3"><i
+                class="bi bi-truck me-2 text-cyan"></i>ข้อมูลที่อยู่จัดส่งและผู้รับสินค้า</h5>
+            <form id="checkoutForm" onsubmit="handleCheckoutSubmit(event)">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label text-white fw-medium">ชื่อ-นามสกุล ผู้รับสินค้า *</label>
+                  <input type="text" id="orderCustomerName" class="form-control" required placeholder="ระบุชื่อผู้รับ">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-white fw-medium">เบอร์โทรศัพท์ติดต่อ *</label>
+                  <input type="tel" id="orderCustomerPhone" class="form-control" required placeholder="08X-XXX-XXXX">
+                </div>
+                <div class="col-12">
+                  <label class="form-label text-white fw-medium">ที่อยู่จัดส่งสินค้าโดยละเอียด *</label>
+                  <textarea id="orderShippingAddress" class="form-control" rows="2" required
+                    placeholder="บ้านเลขที่, หมู่, ถนน, แขวง/ตำบล, เขต/อำเภอ, จังหวัด, รหัสไปรษณีย์"></textarea>
+                </div>
+              </div>
+              <div class="mt-4 d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">เลือกสินค้าต่อ</button>
+                <button type="submit" class="btn btn-cyan px-4">
+                  <i class="bi bi-credit-card me-1"></i> ยืนยันการสั่งซื้อสินค้า
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="productFormModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold" id="productFormTitle"><i
+              class="bi bi-box-seam text-cyan me-2"></i>เพิ่มสินค้าใหม่</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="productManageForm" onsubmit="handleProductFormSubmit(event)">
+            <input type="hidden" id="manageProductId">
+            <div class="row g-3">
+              <div class="col-md-8">
+                <label class="form-label small text-muted">ชื่อสินค้าไอที *</label>
+                <input type="text" id="manageProductName" class="form-control" required
+                  placeholder="เช่น ASUS ROG Zephyrus G16">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small text-muted">หมวดหมู่สินค้า *</label>
+                <select id="manageProductCategory" class="form-select" required>
+                  <option value="Laptops">Laptops (โน้ตบุ๊ก)</option>
+                  <option value="Components">Components (ชิ้นส่วนคอม)</option>
+                  <option value="Monitors">Monitors (จอมอนิเตอร์)</option>
+                  <option value="Accessories">Accessories (เกมมิ่งเกียร์)</option>
+                  <option value="Network & Storage">Network & Storage (เน็ตเวิร์ก)</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small text-muted">ราคาขาย (บาท) *</label>
+                <input type="number" step="0.01" min="1" id="manageProductPrice" class="form-control" required
+                  placeholder="59900">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small text-muted">จำนวนสต็อกคงเหลือ (ชิ้น) *</label>
+                <input type="number" min="0" id="manageProductStock" class="form-control" required placeholder="10">
+              </div>
+              <div class="col-12">
+                <label class="form-label small text-muted">URL รูปภาพสินค้า</label>
+                <input type="url" id="manageProductImage" class="form-control"
+                  placeholder="https://images.unsplash.com/...">
+              </div>
+              <div class="col-12">
+                <label class="form-label small text-muted">คำอธิบายสินค้า</label>
+                <textarea id="manageProductDesc" class="form-control" rows="2"
+                  placeholder="อธิบายจุดเด่นและคุณสมบัติสินค้า"></textarea>
+              </div>
+              <div class="col-12">
+                <label class="form-label small text-muted">สเปกฮาร์ดแวร์โดยละเอียด (Specifications)</label>
+                <input type="text" id="manageProductSpecs" class="form-control"
+                  placeholder="Intel Ultra 9 | 32GB RAM | 1TB NVMe | RTX 4080">
+              </div>
+            </div>
+            <div class="mt-4 d-flex justify-content-end gap-2">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+              <button type="submit" class="btn btn-cyan px-4">
+                <i class="bi bi-save me-1"></i> บันทึกข้อมูลสินค้า
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+
+</html>

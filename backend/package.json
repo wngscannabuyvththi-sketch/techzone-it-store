@@ -1,0 +1,29 @@
+{
+  "name": "techzone_it_store",
+  "version": "1.0.0",
+  "description": "TechZone IT Innovation & Hardware Solutions - Fullstack E-Commerce Web Application",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js"
+  },
+  "keywords": [
+    "ecommerce",
+    "it-store",
+    "hardware",
+    "express",
+    "mysql"
+  ],
+  "author": "IT นิสิต BUU",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.12.0",
+    "nodemailer": "^6.10.0",
+    "sqlite3": "^6.0.1"
+  }
+}
